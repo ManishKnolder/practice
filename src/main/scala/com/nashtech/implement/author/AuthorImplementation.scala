@@ -7,7 +7,7 @@ import scala.collection.mutable.ListBuffer
 import com.nashtech.models.Error
 
 class AuthorImplementation(authorValidator: AuthorValidator) extends AuthorRepo {
-  private val listOfAuthor: ListBuffer[Author] = ListBuffer[Author]().empty
+  private var listOfAuthor: ListBuffer[Author] = ListBuffer[Author]().empty
 
   override def create(author: Author): Either[Error, List[Author]] = {
     if (authorValidator.isAuthorValidated(author)) {
@@ -33,11 +33,12 @@ class AuthorImplementation(authorValidator: AuthorValidator) extends AuthorRepo 
     val check = listOfAuthor.find(list => list.id == author.id)
     check match {
       case Some(_) =>
-        listOfAuthor.map { list =>
+        val result = listOfAuthor.map { list =>
           if (list.id == author.id) author
           else list
         }
-        Right(println("Updated"))
+        listOfAuthor = result
+        Right(println("Updated Author"))
       case None => Left(IdMisMatch("Author Id doesn't match "))
     }
   }
