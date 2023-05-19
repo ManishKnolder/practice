@@ -149,8 +149,8 @@ object AuthorRequest extends App {
             }
           }
         } ~
-        path("create-author" / Segment) { authorName =>
-          put {
+        path("update-authors" / Segment) { authorName =>
+          patch {
             entity(as[Author]) { author =>
               complete(StatusCodes.OK, s"${authorImplementation.put(author.copy(firstName = authorName))}")
             }
