@@ -18,8 +18,8 @@ object BookRequest extends App {
   private val port = 8090
   implicit val system = ActorSystem("HTTP_SERVER")
   implicit val ec = system.dispatcher
-  val bookImplementation = new BookImplementation(new BookValidator)
-  val listOfBook = List(
+  private val bookImplementation = new BookImplementation(new BookValidator)
+  private val listOfBook = List(
     Json.parse(
       """
         |{
@@ -89,6 +89,15 @@ object BookRequest extends App {
             get {
               complete(StatusCodes.OK, s"${bookImplementation.getAll()}")
             }
+        } ~
+        path("delete" / IntNumber) { bookId =>
+          delete {
+            val deleteBook = bookImplementation.delete(bookId)
+            deleteBook match {
+              case Some(value) => complete(StatusCodes.OK, s"$value")
+              case None => complete(StatusCodes.BadRequest)
+            }
+          }
         }
     }
   }
