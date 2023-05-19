@@ -149,10 +149,19 @@ object AuthorRequest extends App {
             }
           }
         } ~
-        path("update-authors" / Segment) { authorName =>
+        path("update-authors" / IntNumber) { authorId =>
           patch {
             entity(as[Author]) { author =>
-              complete(StatusCodes.OK, s"${authorImplementation.put(author.copy(firstName = authorName))}")
+              val check = authorImplementation.get(authorId)
+              check match {
+                case Some(_) =>
+                  val updatedAuthor = authorImplementation.put(author.copy(firstName = "Rakesh", lastName = "Kumar"))
+                  updatedAuthor match {
+                    case Left(value) => complete(StatusCodes.NotFound, s"$value")
+                    case Right(()) => complete(StatusCodes.OK)
+                  }
+                case None => complete(StatusCodes.NotFound)
+              }
             }
           } ~
             get {
