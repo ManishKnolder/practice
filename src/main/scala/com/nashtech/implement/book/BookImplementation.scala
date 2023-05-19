@@ -7,7 +7,7 @@ import com.nashtech.validator.BookValidator
 import scala.collection.mutable.ListBuffer
 
 class BookImplementation(titleValidate: BookValidator) extends BookRepo {
-  private val listOfBook: ListBuffer[Book] = ListBuffer[Book]().empty
+  private var listOfBook: ListBuffer[Book] = ListBuffer[Book]().empty
 
   override def create(book: Book): Either[Error, List[Book]] = {
     if (titleValidate.isBookValidated(book)) {
@@ -35,10 +35,11 @@ class BookImplementation(titleValidate: BookValidator) extends BookRepo {
     val check = listOfBook.find(list => list.id == book.id)
     check match {
       case Some(_) =>
-        listOfBook.map { list =>
+        val result = listOfBook.map { list =>
           if (list.id == book.id) book
           else list
         }
+        listOfBook=result
         Right(println("Updated"))
       case None => Left(IdMisMatch("The Book ID is not similar to exist Book ID"))
     }
@@ -52,14 +53,3 @@ class BookImplementation(titleValidate: BookValidator) extends BookRepo {
     }
   }
 }
-
-//object MainApplication extends App {
-//  val book = Book(1212, "Scala Fundamentals", 230, 21431232, 101)
-//  val newBook = book.copy(112, "Java", 5000)
-//  val createBook = new BookImplementation(new BookValidator)
-//  createBook.create(book)
-//  createBook.create(newBook)
-//  val result = createBook.delete(1212)
-//  println(result)
-//
-//}
