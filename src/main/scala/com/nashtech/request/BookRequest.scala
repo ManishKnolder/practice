@@ -61,7 +61,6 @@ object BookRequest extends App {
             }
           }
       } ~
-        /*update*/
         path("book" / IntNumber) { bookId =>
           get {
             val success = bookImplementation.get(bookId)
@@ -85,7 +84,6 @@ object BookRequest extends App {
                   }
                 case None => complete(StatusCodes.NotFound)
               }
-
             }
           } ~
             get {
