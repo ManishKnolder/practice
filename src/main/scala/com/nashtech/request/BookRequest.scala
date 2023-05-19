@@ -61,6 +61,7 @@ object BookRequest extends App {
             }
           }
       } ~
+        /*update*/
         path("book" / IntNumber) { bookId =>
           get {
             val success = bookImplementation.get(bookId)
@@ -70,14 +71,26 @@ object BookRequest extends App {
             }
           }
         } ~
-        path("create-book" / IntNumber) { authorId =>
-          put {
+        /*update*/
+        path("update-book" / IntNumber) { id =>
+          patch {
             entity(as[Book]) { book =>
-              println(bookImplementation.put(book.copy(authorId = authorId)))
-              bookImplementation.put(book.copy(authorId = authorId))
-              complete(StatusCodes.OK, s"${bookImplementation.put(book.copy(authorId = authorId))}")
+              val check = bookImplementation.get(id)
+              check match {
+                case Some(_) =>
+                  val updateBook = bookImplementation.put(book.copy(title = "ROCKY"))
+                  updateBook match {
+                    case Left(value) => complete(StatusCodes.NotFound, s"$value")
+                    case Right(()) => complete(StatusCodes.OK)
+                  }
+                case None => complete(StatusCodes.NotFound)
+              }
+
             }
-          }
+          } ~
+            get {
+              complete(StatusCodes.OK, s"${bookImplementation.getAll()}")
+            }
         }
     }
   }
