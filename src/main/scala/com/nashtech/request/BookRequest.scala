@@ -98,6 +98,14 @@ object BookRequest extends App {
               case None => complete(StatusCodes.BadRequest)
             }
           }
+        } ~
+        path("get-book-by") {
+          get {
+            parameters("authorId".?, "title".?, "id".?) { (authorId, title, id) =>
+              val filteredBooks = bookImplementation.filterBooks(authorId, title, id)
+              complete(StatusCodes.OK, s"$filteredBooks")
+            }
+          }
         }
     }
   }
