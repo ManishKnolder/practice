@@ -39,7 +39,7 @@ class BookImplementation(titleValidate: BookValidator) extends BookRepo {
           if (list.id == book.id) book
           else list
         }
-        listOfBook=result
+        listOfBook = result
         Right(println("Updated"))
       case None => Left(IdMisMatch("The Book ID is not similar to exist Book ID"))
     }
@@ -51,5 +51,14 @@ class BookImplementation(titleValidate: BookValidator) extends BookRepo {
       case Some(value) => Some((listOfBook -= value).toList)
       case None => None
     }
+  }
+
+  def filterBooks(authorId: Option[String], title: Option[String], id: Option[String]): List[Book] = {
+    listOfBook.filter { book =>
+      println(authorId.contains(book.authorId.toString))
+      authorId.contains(book.authorId.toString) &&
+        title.contains(book.title) &&
+        id.contains(book.id.toString)
+    }.toList
   }
 }
